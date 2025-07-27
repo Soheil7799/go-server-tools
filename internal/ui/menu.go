@@ -1,30 +1,29 @@
-package main
+package ui
 
 import (
 	"fmt"
-	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type model struct {
+type MenuModel struct {
 	choices  []string
 	cursor   int
 	selected string
 }
 
-func initializeModel() model {
-	return model{
+func NewMenuModel() MenuModel {
+	return MenuModel{
 		choices: []string{"SSH", "rsync", "Exit"},
 		cursor:  0,
 	}
 }
 
-func (m model) Init() tea.Cmd {
+func (m MenuModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m MenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -46,7 +45,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 	return m, nil
 }
-func (m model) View() string {
+func (m MenuModel) View() string {
 	s := "which command do you want to run ?\n\n"
 	for i, c := range m.choices {
 		selectedCursor := "[ ]"
@@ -60,13 +59,12 @@ func (m model) View() string {
 	return s
 }
 
-func main() {
-	m := initializeModel()
-	p := tea.NewProgram(m)
-	_, err := p.Run()
-	if err != nil {
-		fmt.Printf("Encountred Error : %s", err)
-		os.Exit(1)
+// func main() {
+// 	m := NewMenuModel()
+// 	p := tea.NewProgram(m)
+// 	_, err := p.Run()
+// 	if err != nil {
+// 		fmt.Printf("Encountred Error : %s", err)
 
-	}
-}
+// 	}
+// }
