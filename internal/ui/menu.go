@@ -11,6 +11,9 @@ type MenuModel struct {
 	cursor   int
 	selected string
 }
+type SelectionMessage struct {
+	Choice string
+}
 
 func NewMenuModel() MenuModel {
 	return MenuModel{
@@ -37,7 +40,9 @@ func (m MenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "enter", " ":
 			m.selected = m.choices[m.cursor]
-			return m, tea.Quit
+			return m, func() tea.Msg {
+				return SelectionMessage{Choice: m.selected}
+			}
 		case "ctrl+c", "q":
 			return m, tea.Quit
 
