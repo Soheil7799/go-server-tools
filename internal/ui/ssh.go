@@ -62,8 +62,8 @@ func (m SshModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.SelectedKey = m.Keys[m.Cursor]
 				return m, func() tea.Msg {
 					return SSHReadyMsg{
-						Server: m.SelectedServer,
-						Key:    m.SelectedKey,
+						Server: m.SelectedServer.Host,
+						Key:    m.SelectedKey.Path,
 					}
 				}
 			}
@@ -76,23 +76,23 @@ func (m SshModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m SshModel) View() string {
 	var s string
-	if m.SelectedServer == "" {
+	if m.SelectedServer.Name == "" {
 		s = "Choose the server you want to connect:\n\n"
 		for i, r := range m.Servers {
 			cursor := "[ ]"
 			if m.Cursor == i {
 				cursor = "[*]"
 			}
-			s += fmt.Sprintf("%s %s\n", cursor, r)
+			s += fmt.Sprintf("%s %s - %s\n", cursor, r.Name, r.Description)
 		}
-	} else if m.SelectedServer != "" {
+	} else if m.SelectedServer.Name != "" {
 		s = "Choose the key you want to use:\n\n"
 		for i, k := range m.Keys {
 			cursor := "[ ]"
 			if m.Cursor == i {
 				cursor = "[*]"
 			}
-			s += fmt.Sprintf("%s %s\n", cursor, k)
+			s += fmt.Sprintf("%s %s - %s\n", cursor, k.Name, k.Description)
 		}
 	}
 	return s
