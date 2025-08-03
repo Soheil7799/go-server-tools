@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Soheil7799/go-server-tools/internal/commands"
 	ui "github.com/Soheil7799/go-server-tools/internal/ui"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -15,13 +16,14 @@ type SelectionMessage struct {
 type model struct {
 	screen    int
 	menuModel ui.MenuModel
-	sshMode   ui.SshModel
+	sshModel  ui.SshModel
 }
 
 func initializeModel() model {
 	return model{
 		screen:    0,
 		menuModel: ui.NewMenuModel(),
+		sshModel:  ui.NewSshModel(),
 	}
 }
 
@@ -39,6 +41,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Exit":
 			return m, tea.Quit
 		}
+	case ui.SSHReadyMsg:
+		err := commands.ExecuteSSH(msg.Server, msg.Key)
+		if err != nil {
+			fmt.Print(err)
+			return m, nil
+		}
+		return m, tea.Quit
 	case tea.KeyMsg:
 		if msg.String() == "ctrl+c" {
 			return m, tea.Quit
@@ -49,7 +58,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.menuModel = updatedModel.(ui.MenuModel)
 			return m, cmd
 		case 1:
-
+			updatedModel, cmd := m.sshModel.Update(msg)
+			m.sshModel = updatedModel.(ui.SshModel)
+			return m, cmd
 		}
 
 	}
@@ -60,7 +71,7 @@ func (m model) View() string {
 	case 0:
 		return m.menuModel.View()
 	case 1:
-		return "SSH Screen (coming soon)\nPress q to quit"
+		return m.sshModel.View()
 	case 2:
 		return "rsync Screen (coming soon)\nPress q to quit"
 	default:
