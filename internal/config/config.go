@@ -2,6 +2,8 @@ package config
 
 import (
 	"os"
+	"os/user"
+	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
@@ -24,9 +26,12 @@ type Config struct {
 }
 
 func LoadConfig() (*Config, error) {
-	// configPath := "~/.config/go-server-tools/config.yaml"
-	configPath := "configs/example.yaml"
-
+	usr, err := user.Current()
+	if err != nil {
+		return nil, err
+	}
+	configPath := filepath.Join(usr.HomeDir, ".config", "go-server-tools", "config.yaml")
+	// configPath := "configs/example.yaml"
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		return nil, err
