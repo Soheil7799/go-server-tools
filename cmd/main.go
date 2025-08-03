@@ -56,7 +56,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, tea.Quit
 	case ui.RsyncReadyMsg:
-		// handle rsync execution command
+		err := commands.ExecuteRsync(msg.Server.Host, msg.Key.Path, msg.LocalPath, msg.RemotePath, msg.Direction)
+		if err != nil {
+			fmt.Print(err)
+			return m, nil
+		}
 	case tea.KeyMsg:
 		if msg.String() == "ctrl+c" {
 			return m, tea.Quit
