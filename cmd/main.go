@@ -15,6 +15,7 @@ type SelectionMessage struct {
 type model struct {
 	screen    int
 	menuModel ui.MenuModel
+	sshMode   ui.SshModel
 }
 
 func initializeModel() model {
@@ -47,6 +48,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			updatedModel, cmd := m.menuModel.Update(msg)
 			m.menuModel = updatedModel.(ui.MenuModel)
 			return m, cmd
+		case 1:
+
 		}
 
 	}
