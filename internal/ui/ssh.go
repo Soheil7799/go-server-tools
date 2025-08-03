@@ -3,23 +3,24 @@ package ui
 import (
 	"fmt"
 
+	"github.com/Soheil7799/go-server-tools/internal/config"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type SshModel struct {
-	Keys           []string
-	SelectedKey    string
-	Servers        []string
-	SelectedServer string
+	Keys           []config.SSHKey
+	SelectedKey    config.SSHKey
+	Servers        []config.Server
+	SelectedServer config.Server
 	Cursor         int
 	Step           int
 }
 
-func NewSshModel() SshModel {
+func NewSshModel(cfg *config.Config) SshModel {
 	return SshModel{
 		Cursor:  0,
-		Keys:    []string{"rsa_key_1", "rsa_key_2", "rsa_key_3"},
-		Servers: []string{"backend_1", "frontend_1", "logic"},
+		Keys:    cfg.SSHKeys,
+		Servers: cfg.Servers,
 		Step:    0,
 	}
 }
