@@ -15,9 +15,10 @@ type SelectionMessage struct {
 }
 
 type model struct {
-	screen    int
-	menuModel ui.MenuModel
-	sshModel  ui.SshModel
+	screen     int
+	menuModel  ui.MenuModel
+	sshModel   ui.SshModel
+	rsyncModel ui.RsyncModel
 }
 
 func initializeModel() model {
@@ -26,9 +27,10 @@ func initializeModel() model {
 		panic(fmt.Sprintf("Failed to load config file: %v", err))
 	}
 	return model{
-		screen:    0,
-		menuModel: ui.NewMenuModel(),
-		sshModel:  ui.NewSshModel(cfg),
+		screen:     0,
+		menuModel:  ui.NewMenuModel(),
+		sshModel:   ui.NewSshModel(cfg),
+		rsyncModel: ui.NewRsyncModel(cfg),
 	}
 }
 
@@ -53,6 +55,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		return m, tea.Quit
+	case ui.RsyncReadyMsg:
+		// handle rsync execution command
 	case tea.KeyMsg:
 		if msg.String() == "ctrl+c" {
 			return m, tea.Quit
@@ -66,6 +70,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			updatedModel, cmd := m.sshModel.Update(msg)
 			m.sshModel = updatedModel.(ui.SshModel)
 			return m, cmd
+		case 2:
+			updatedModel, cmd := m.rsyncModel.Update(msg)
+			m.rsyncModel = updatedModel.(ui.RsyncModel)
+			return m, cmd
 		}
 
 	}
@@ -78,7 +86,7 @@ func (m model) View() string {
 	case 1:
 		return m.sshModel.View()
 	case 2:
-		return "rsync Screen (coming soon)\nPress q to quit"
+		return m.rsyncModel.View()
 	default:
 		return "Unknown screen"
 	}
