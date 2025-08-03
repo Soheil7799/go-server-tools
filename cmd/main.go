@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/Soheil7799/go-server-tools/internal/commands"
+	"github.com/Soheil7799/go-server-tools/internal/config"
 	ui "github.com/Soheil7799/go-server-tools/internal/ui"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -20,10 +21,14 @@ type model struct {
 }
 
 func initializeModel() model {
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		panic(fmt.Sprintf("Failed to load config file: %v", err))
+	}
 	return model{
 		screen:    0,
 		menuModel: ui.NewMenuModel(),
-		sshModel:  ui.NewSshModel(),
+		sshModel:  ui.NewSshModel(cfg),
 	}
 }
 
