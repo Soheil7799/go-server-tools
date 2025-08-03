@@ -1,0 +1,25 @@
+servers:
+    - name: "Production Backend"
+      host: "user@prod.example.com"
+      description: "Main production server"
+
+    - name: "Staging Frontend"
+      host: "deploy@staging.frontend.com"
+      description: "Frontend staging environment"
+
+    - name: "Development Server"
+      host: "dev@192.168.1.100"
+      description: "Local development machine"
+
+ssh_keys:
+    - name: "Production Key"
+      path: "~/.ssh/prod_rsa"
+      description: "Key for production servers"
+
+    - name: "Personal Key"
+      path: "~/.ssh/id_rsa"
+      description: "Default personal SSH key"
+
+    - name: "Work Key"
+      path: "~/.ssh/work_ed25519"
+      description: "Company provided key"
