@@ -49,18 +49,28 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 	case ui.SSHReadyMsg:
-		err := commands.ExecuteSSH(msg.Server, msg.Key)
-		if err != nil {
-			fmt.Print(err)
-			return m, nil
-		}
-		return m, tea.Quit
+		return m, tea.Sequence(
+			tea.Quit,
+			func() tea.Msg {
+				err := commands.ExecuteSSH(msg.Server, msg.Key)
+				if err != nil {
+					fmt.Printf("SSH Error: %v\n", err)
+				}
+				return nil
+			},
+		)
+
 	case ui.RsyncReadyMsg:
-		err := commands.ExecuteRsync(msg.Server.Host, msg.Key.Path, msg.LocalPath, msg.RemotePath, msg.Direction)
-		if err != nil {
-			fmt.Print(err)
-			return m, nil
-		}
+		return m, tea.Sequence(
+			tea.Quit,
+			func() tea.Msg {
+				err := commands.ExecuteRsync(msg.Server.Host, msg.Key.Path, msg.LocalPath, msg.RemotePath, msg.Direction)
+				if err != nil {
+					fmt.Printf("Rsync Error: %v\n", err)
+				}
+				return nil
+			},
+		)
 	case tea.KeyMsg:
 		if msg.String() == "ctrl+c" {
 			return m, tea.Quit
